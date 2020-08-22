@@ -18,9 +18,6 @@ def partition(values, first, last):
         if upper < lower:
             done = True
         else:
-            values[lower], values[upper] = swap(values[lower], values[upper])
-    values[first], values[upper] = swap(values[first], values[upper])
+            values[lower], values[upper] = values[upper], values[lower]
+    values[first], values[upper] = values[upper], values[first]
     return upper
-
-def swap(s1, s2):
-    return s2, s1

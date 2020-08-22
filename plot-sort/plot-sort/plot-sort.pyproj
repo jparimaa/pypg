@@ -21,6 +21,7 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="bubblesort.py" />
     <Compile Include="mergesort.py">
       <SubType>Code</SubType>
     </Compile>
