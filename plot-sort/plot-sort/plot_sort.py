@@ -5,8 +5,8 @@ import bubblesort
 import random
 import datetime
 
-import matplotlib.pyplot as plot
-import numpy
+import matplotlib.pyplot as plt
+import numpy as np
 
 def is_sorted(values):
     for i in range(len(values) - 2):
@@ -47,8 +47,8 @@ bubblesort_time = run_sort(bubblesort_func, my_list)
 print_executions_time("Bubblesort", N, bubblesort_time)
 
 times = [quicksort_time, mergesort_time, bubblesort_time]
-x = numpy.arange(len(times))
-plot.title("Execution time in milliseconds, N = {}".format(N))
-plot.bar(x, times)
-plot.xticks(x, ('Quicksort', 'Mergesort', 'Bubblesort'))
-plot.show()
+x = np.arange(len(times))
+plt.title("Execution time in milliseconds, N = {}".format(N))
+plt.bar(x, times)
+plt.xticks(x, ('Quicksort', 'Mergesort', 'Bubblesort'))
+plt.show()
