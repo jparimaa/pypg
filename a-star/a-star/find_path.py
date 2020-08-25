@@ -4,19 +4,28 @@ import numpy as np
 import random
 import astar
 
+def generate_10x10_test_grid():
+    grid = np.zeros(100)
+    for i in range(16, 57, 10):
+        grid[i] = 1
+    for i in range(52, 57):
+        grid[i] = 1
+    return grid.reshape((10, 10))
+
 def generate_grid(row_count, column_count):
-    random.seed(4)
+    random.seed(5)
     total_count = row_count * column_count
     grid = np.zeros(total_count)
     for i in range(total_count):
         value = 0
-        if random.randrange(100) < 50:
+        if random.randrange(100) < 30:
             value = 1
         grid[i] = value
     return grid.reshape((row_count, column_count))
 
-width = 5
-height = 5
+width = 10
+height = 10
+#grid = generate_10x10_test_grid()
 grid = generate_grid(width, height)
 print(grid)
 #color_map = ListedColormap([[1, 1, 1], [0, 0, 0]])

@@ -22,7 +22,7 @@ class Visualizer():
 # 6 = start, end
     def __init__(self, end):
         self.color_map = ListedColormap([[1, 1, 1], [0, 0, 0], [0.6, 0.6, 1], [0, 1, 0], [1, 0, 0], [1, 0, 1], [0, 1, 1]])
-        self.max_columns = 10
+        self.max_columns = 5
         self.grid_copies = []
         self.path = []
         self.end = end
