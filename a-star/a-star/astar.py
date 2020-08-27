@@ -68,6 +68,19 @@ class Visualizer():
         for g in self.grid_copies:
             print(g)
 
+def h_greedy(child, end):
+    return ((child.position[0] - end_node.position[0]) ** 2) + ((child.position[1] - end_node.position[1]) ** 2)
+
+def h_euclidean(child, end):
+    dx = abs(child.position[0] - end.position[0])
+    dy = abs(child.position[1] - end.position[1])
+    orthogonalCost = 1
+    diagonalCost = 1
+    return orthogonalCost * (dx + dy) + (diagonalCost - 2 * orthogonalCost) * min(dx, dy)
+
+def h_dijkstra():
+    return 0
+
 def find_path(grid, width, height, start, end, visualize=True):
     start_node = Node(None, start)
     end_node = Node(None, end)
@@ -125,8 +138,8 @@ def find_path(grid, width, height, start, end, visualize=True):
             if in_closed_list:
                 continue
 
-            child.g = current_node.g + 1
-            child.h = ((child.position[0] - end_node.position[0]) ** 2) + ((child.position[1] - end_node.position[1]) ** 2)
+            child.g = current_node.g + 1            
+            child.h = h_euclidean(child, end_node)            
             child.f = child.g + child.h
 
             in_open_list = False
