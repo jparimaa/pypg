@@ -25,14 +25,17 @@ def generate_grid(row_count, column_count):
 
 width = 10
 height = 10
-#grid = generate_10x10_test_grid()
-grid = generate_grid(width, height)
+grid = generate_10x10_test_grid()
+#grid = generate_grid(width, height)
 print(grid)
 #color_map = ListedColormap([[1, 1, 1], [0, 0, 0]])
 #plt.matshow(grid, cmap = color_map)
 #plt.show()
-path = astar.find_path(grid, width, height, [0,0], [width - 1, height - 1], True)
+path = astar.find_path(grid, width, height, [0,0], [width - 1, height - 1])
+for p in path:
+    grid[p[0]][p[1]] = 8
 if len(path) > 0:
     print(path)
+    print(grid)
 else:
     print("Path not found")

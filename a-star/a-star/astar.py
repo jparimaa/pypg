@@ -1,5 +1,8 @@
 from matplotlib.colors import ListedColormap
 import matplotlib.pyplot as plt
+import math  
+
+sqrt2 = math.sqrt(2)
 
 class Node():
     def __init__(self, parent=None, position=None):
@@ -37,11 +40,13 @@ class Visualizer():
         visualize_grid[self.end[0]][self.end[1]] = 6
         self.grid_copies.append(visualize_grid)
 
-    def add_path(self, path):
+    def visualize_path(self, path):
         g = self.grid_copies[-1].copy()        
         for p in path:
             g[p[0]][p[1]] = 5
+        self.grid_copies = []
         self.grid_copies.append(g)
+        self.visualize()
 
     def visualize(self):
         total_count = len(self.grid_copies)
@@ -69,19 +74,19 @@ class Visualizer():
             print(g)
 
 def h_greedy(child, end):
-    return ((child.position[0] - end_node.position[0]) ** 2) + ((child.position[1] - end_node.position[1]) ** 2)
+    return ((child.position[0] - end.position[0]) ** 2) + ((child.position[1] - end.position[1]) ** 2)
 
 def h_euclidean(child, end):
     dx = abs(child.position[0] - end.position[0])
     dy = abs(child.position[1] - end.position[1])
     orthogonalCost = 1
-    diagonalCost = 1
+    diagonalCost = sqrt2
     return orthogonalCost * (dx + dy) + (diagonalCost - 2 * orthogonalCost) * min(dx, dy)
 
 def h_dijkstra():
     return 0
 
-def find_path(grid, width, height, start, end, visualize=True):
+def find_path(grid, width, height, start, end, visualize_progress=False, visualize_result=True):
     start_node = Node(None, start)
     end_node = Node(None, end)
     open_list = []
@@ -108,9 +113,10 @@ def find_path(grid, width, height, start, end, visualize=True):
             while current is not None:
                 path.append(current.position)
                 current = current.parent
-            if visualize:
-                visualizer.add_path(path)
-                visualizer.visualize()
+            if visualize_result:
+                if not visualize_progress:
+                    visualizer.add_grid(grid, open_list, closed_list, current_node)
+                visualizer.visualize_path(path)
             return path[::-1]
                 
         children = []
@@ -138,8 +144,14 @@ def find_path(grid, width, height, start, end, visualize=True):
             if in_closed_list:
                 continue
 
-            child.g = current_node.g + 1            
-            child.h = h_euclidean(child, end_node)            
+
+            if min(current_node.position[0], current_node.position[1]) == 0:
+                child.g = current_node.g + 1
+            else:
+                child.g = current_node.g + sqrt2
+            child.h = h_euclidean(child, end_node)
+            #child.h = h_dijkstra()
+            #child.h = h_greedy(child, end_node)
             child.f = child.g + child.h
 
             in_open_list = False
@@ -153,7 +165,7 @@ def find_path(grid, width, height, start, end, visualize=True):
 
             open_list.append(child)
         
-        if visualize:
+        if visualize_progress:
             visualizer.add_grid(grid, open_list, closed_list, current_node)
             visualizer.visualize()
 
