@@ -22,12 +22,13 @@ class KdTree():
         return current
 
     def visualize(self):
-        g = graphviz.Digraph('g', filename='kdtree.gv', node_attr={'shape': 'record', 'height': '.1'})
+        g = graphviz.Graph('g', filename='kdtree.gv', format = "png")
+        g.graph_attr['rankdir'] = 'BT'
         self.visualize_recursive(self.root, None, g)
         g.view()
                 
     def visualize_recursive(self, current, parent, g):
-        list_str = ' '.join([str(elem) for elem in current.values]) 
+        list_str = ', '.join([str(elem) for elem in current.values]) 
         g.node(current.id, list_str)
         if parent != None:
             g.edge(current.id, parent.id)
@@ -35,28 +36,6 @@ class KdTree():
             self.visualize_recursive(current.left, current, g)
         if not current.right.empty:
             self.visualize_recursive(current.right, current, g)
-
-    def print(self):
-        self.print_recursive(self.root)
-
-    def print_recursive(self, current):
-        out = current.id + ": " + ' '.join([str(elem) for elem in current.values])
-        print(out)
-        if current.left.empty:
-            out = "left: empty"
-        else:
-            out = "left: " + current.left.id
-        print(out)
-        if current.right.empty:
-            out = "right: empty"
-        else:
-            out = "right: " + current.right.id
-        print(out)
-
-        if not current.left.empty:
-            self.print_recursive(current.left)
-        if not current.right.empty:
-            self.print_recursive(current.right)
 
 class Node():
     def __init__(self):
