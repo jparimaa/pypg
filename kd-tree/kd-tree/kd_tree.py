@@ -1,31 +1,59 @@
 import graphviz
+import copy
 
 class KdTree():
     def __init__(self, d):
         self.d = d
         self.root = Node()
         self.counter = 0
+        self.dummyID = -1
 
-    def add_node(self, values):        
-        return self.add_node_recursive(self.root, values, 0)
+    def add(self, values):        
+        return self.__add_recursive(self.root, values, 0)
         
-    def add_node_recursive(self, current, values, depth):
+    def __add_recursive(self, current, values, depth):
         if current.empty:
             current.set_values(values, self.counter)
             self.counter += 1
             return current
         dimension = depth % self.d
         if values[dimension] < current.values[dimension]:
-            current.left = self.add_node_recursive(current.left, values, depth + 1)
+            current.left = self.__add_recursive(current.left, values, depth + 1)
         else:
-            current.right = self.add_node_recursive(current.right, values, depth + 1)
+            current.right = self.__add_recursive(current.right, values, depth + 1)
+        return current
+
+    def remove(self, values):
+        return self.__remove_recursive(self.root, values, 0)
+
+    def __remove_recursive(self, current, values, depth):
+        if current.empty:
+            return []
+        dimension = depth % self.d
+        if current.values == values:
+            if not current.right.empty:
+                min_node = self.__find_min_recursive(current.right, dimension, depth + 1)
+                replace_node = copy.deepcopy(min_node)
+                replace_node.right = self.__remove_recursive(current.right, min_node.values, depth + 1)
+                current = replace_node
+            elif not current.left.empty:
+                min_node = self.__find_min_recursive(current.left, dimension, depth + 1)
+                replace_node = copy.deepcopy(min_node)
+                replace_node.right = self.__remove_recursive(current.left, min_node.values, depth + 1)
+                current = replace_node
+            else:
+                current.reset()
+            return current
+        if values[dimension] < current.values[dimension]:
+            current.left = self.__remove_recursive(current.left, values, depth + 1)
+        else:
+            current.right = self.__remove_recursive(current.right, values, depth + 1)
         return current
 
     def find(self, values):
-        return self.find_recursive(self.root, values, 0)
+        return self.__find_recursive(self.root, values, 0)
 
-    def find_recursive(self, current, values, depth):
-
+    def __find_recursive(self, current, values, depth):
         if values == current.values:
             return current
         dimension = depth % self.d
@@ -33,17 +61,17 @@ class KdTree():
             if current.left.empty:
                 return None
             else:
-                return self.find_recursive(current.left, values, depth + 1)
+                return self.__find_recursive(current.left, values, depth + 1)
         else:
             if current.right.empty:
                 return None
             else:
-                return self.find_recursive(current.right, values, depth + 1)
+                return self.__find_recursive(current.right, values, depth + 1)
 
     def find_min(self, dimension):
-        return self.find_min_recursive(self.root, dimension, 0)
+        return self.__find_min_recursive(self.root, dimension, 0)
 
-    def find_min_recursive(self, current, dimension, depth):
+    def __find_min_recursive(self, current, dimension, depth):
         if current.empty:
             return current
         current_dimension = depth % self.d
@@ -52,30 +80,35 @@ class KdTree():
                 return current
             else:
                 return get_smaller_node(current, 
-                                        self.find_min_recursive(current.left, dimension, depth + 1), 
+                                        self.__find_min_recursive(current.left, dimension, depth + 1), 
                                         dimension)
 
-        smallest_child = get_smaller_node(self.find_min_recursive(current.left, dimension, depth + 1), 
-                                          self.find_min_recursive(current.right, dimension, depth + 1), 
+        smallest_child = get_smaller_node(self.__find_min_recursive(current.left, dimension, depth + 1), 
+                                          self.__find_min_recursive(current.right, dimension, depth + 1), 
                                           dimension)
         return get_smaller_node(current, smallest_child, dimension)
 
-    def visualize(self):
-        g = graphviz.Graph('g', filename='kdtree.gv', format = "png")
-        g.graph_attr['rankdir'] = 'BT'
-        self.visualize_recursive(self.root, None, g)
+    def visualize(self, filename="kdtree.gv"):
+        g = graphviz.Graph("g", filename=filename, format = "png")
+        g.graph_attr["rankdir"] = "BT"
+        self.dummyID = -1
+        self.__visualize_recursive(self.root, None, g)
         g.view()
                 
-    def visualize_recursive(self, current, parent, g):
-        list_str = current.id + "\n"
-        list_str += ', '.join([str(elem) for elem in current.values])
+    def __visualize_recursive(self, current, parent, g):                
+        if current.empty:
+            dummyID = str(self.dummyID)
+            dummyNode = g.node(dummyID, "", style="invis")
+            if parent != None:
+                g.edge(dummyID, parent.id)
+            self.dummyID -= 1
+            return
+        list_str = ', '.join([str(elem) for elem in current.values])
         g.node(current.id, list_str)
         if parent != None:
             g.edge(current.id, parent.id)
-        if not current.left.empty:
-            self.visualize_recursive(current.left, current, g)
-        if not current.right.empty:
-            self.visualize_recursive(current.right, current, g)
+        self.__visualize_recursive(current.left, current, g)
+        self.__visualize_recursive(current.right, current, g)
 
 class Node():
     def __init__(self):
@@ -89,6 +122,11 @@ class Node():
         self.left = Node()
         self.right = Node()
 
+    def reset(self):
+        self.empty = True
+        self.id = ""
+        self.values = []
+        
 def get_smaller_node(n1, n2, d):
     if n1.empty:
         return n2
