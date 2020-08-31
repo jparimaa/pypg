@@ -24,22 +24,23 @@ class KdTree():
         return current
 
     def remove(self, values):
-        return self.__remove_recursive(self.root, values, 0)
+        self.node_removed = False
+        self.root = self.__remove_recursive(self.root, values, 0)
+        return self.node_removed
 
     def __remove_recursive(self, current, values, depth):
-        if current.empty:
-            return []
         dimension = depth % self.d
         if current.values == values:
+            self.node_removed = True
             if not current.right.empty:
                 min_node = self.__find_min_recursive(current.right, dimension, depth + 1)
-                replace_node = copy.deepcopy(min_node)
-                replace_node.right = self.__remove_recursive(current.right, min_node.values, depth + 1)
+                replace_node = copy.copy(min_node)
+                replace_node.right = self.__remove_recursive(current.right, replace_node.values, depth + 1)
                 current = replace_node
             elif not current.left.empty:
-                min_node = self.__find_min_recursive(current.left, dimension, depth + 1)
-                replace_node = copy.deepcopy(min_node)
-                replace_node.right = self.__remove_recursive(current.left, min_node.values, depth + 1)
+                min_node = self.__find_min_recursive(current.left, dimension, depth + 1)                
+                replace_node = copy.copy(min_node)
+                replace_node.right = self.__remove_recursive(current.left, replace_node.values, depth + 1)
                 current = replace_node
             else:
                 current.reset()
