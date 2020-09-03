@@ -29,6 +29,8 @@ class KdTree():
         return self.node_removed
 
     def __remove_recursive(self, current, values, depth):
+        if current.empty:
+            return current
         dimension = depth % self.d
         if current.values == values:
             self.node_removed = True
@@ -89,6 +91,41 @@ class KdTree():
                                           dimension)
         return get_smaller_node(current, smallest_child, dimension)
 
+    def find_nearest(self, point):
+        nearest = FindNearestState()
+        self.__find_nearest_recursive(point, self.root, 0, nearest)
+        return nearest.values
+
+    def __find_nearest_recursive(self, point, current, depth, nearest):        
+        if current.empty:
+            return
+        self.__check_smaller_distance(point, current, nearest)
+        if current.left.empty and current.right.empty:
+            return
+        dimension = depth % self.d
+        distance_ok = get_squared_distance([current.values[dimension]], [point[dimension]]) < nearest.distance
+        is_smaller = point[dimension] < current.values[dimension]
+        search_right = False
+        search_left = False
+        if distance_ok:
+            search_right = True
+            search_left = True
+        else:
+            if is_smaller:
+                search_left = True
+            else:
+                search_right = True
+        if search_right and not current.right.empty:
+            self.__find_nearest_recursive(point, current.right, depth + 1, nearest)
+        if search_left and not current.left.empty:
+            self.__find_nearest_recursive(point, current.left, depth + 1, nearest)
+
+    def __check_smaller_distance(self, point, current, nearest):
+        d = get_squared_distance(point, current.values)
+        if nearest.distance == -1 or d < nearest.distance:
+            nearest.values = current.values
+            nearest.distance = d
+
     def visualize(self, filename="kdtree.gv"):
         g = graphviz.Graph("g", filename=filename, format = "png")
         g.graph_attr["rankdir"] = "BT"
@@ -127,6 +164,11 @@ class Node():
         self.empty = True
         self.id = ""
         self.values = []
+
+class FindNearestState():
+    def __init__(self):
+        self.distance = -1
+        self.values = []
         
 def get_smaller_node(n1, n2, d):
     if n1.empty:
@@ -137,3 +179,10 @@ def get_smaller_node(n1, n2, d):
         return n1
     else:
         return n2
+
+def get_squared_distance(v1, v2):
+    assert(len(v1) == len(v2))
+    v = 0
+    for i in range(len(v1)):
+        v += (v1[i] - v2[i]) ** 2
+    return v
