@@ -64,7 +64,7 @@ def create_test_tree_1():
 #print("Smalles node values d=1: {}".format(my_2d_tree.find_min(1).values))
 my_2d_tree = create_test_tree_1()
 #my_2d_tree.visualize()
-nearest = my_2d_tree.find_nearest([426,426])
+nearest = my_2d_tree.find_nearest([160,500])
 print(nearest)
 #removed = my_2d_tree.remove([450,450])
 #print(removed)

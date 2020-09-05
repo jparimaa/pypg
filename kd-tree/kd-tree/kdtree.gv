@@ -1,24 +1,44 @@
 graph g {
 	graph [rankdir=BT]
-	0 [label="200, 200"]
-	1 [label="150, 150"]
+	0 [label="300, 300"]
+	1 [label="200, 200"]
 	1 -- 0
-	2 [label="160, 140"]
+	2 [label="100, 100"]
 	2 -- 1
+	3 [label="50, 50"]
+	3 -- 2
 	-1 [label="" style=invis]
-	-1 -- 2
+	-1 -- 3
 	-2 [label="" style=invis]
-	-2 -- 2
-	3 [label="160, 160"]
-	3 -- 1
+	-2 -- 3
 	-3 [label="" style=invis]
-	-3 -- 3
-	4 [label="170, 170"]
-	4 -- 3
+	-3 -- 2
+	4 [label="150, 500"]
+	4 -- 1
 	-4 [label="" style=invis]
 	-4 -- 4
+	5 [label="250, 250"]
+	5 -- 4
 	-5 [label="" style=invis]
-	-5 -- 4
+	-5 -- 5
 	-6 [label="" style=invis]
-	-6 -- 0
+	-6 -- 5
+	6 [label="400, 400"]
+	6 -- 0
+	7 [label="350, 350"]
+	7 -- 6
+	-7 [label="" style=invis]
+	-7 -- 7
+	-8 [label="" style=invis]
+	-8 -- 7
+	8 [label="500, 500"]
+	8 -- 6
+	9 [label="425, 425"]
+	9 -- 8
+	-9 [label="" style=invis]
+	-9 -- 9
+	-10 [label="" style=invis]
+	-10 -- 9
+	-11 [label="" style=invis]
+	-11 -- 8
 }

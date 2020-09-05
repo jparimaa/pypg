@@ -100,25 +100,19 @@ class KdTree():
         if current.empty:
             return
         self.__check_smaller_distance(point, current, nearest)
-        if current.left.empty and current.right.empty:
-            return
         dimension = depth % self.d
-        distance_ok = get_squared_distance([current.values[dimension]], [point[dimension]]) < nearest.distance
-        is_smaller = point[dimension] < current.values[dimension]
-        search_right = False
-        search_left = False
-        if distance_ok:
-            search_right = True
-            search_left = True
+        search_right = point[dimension] >= current.values[dimension]
+        if search_right:
+            self.__find_nearest_recursive(point, current.right, depth + 1, nearest)            
         else:
-            if is_smaller:
-                search_left = True
-            else:
-                search_right = True
-        if search_right and not current.right.empty:
-            self.__find_nearest_recursive(point, current.right, depth + 1, nearest)
-        if search_left and not current.left.empty:
             self.__find_nearest_recursive(point, current.left, depth + 1, nearest)
+            
+        distance_ok = get_squared_distance([current.values[dimension]], [point[dimension]]) < nearest.distance
+        if distance_ok:
+            if search_right:
+                self.__find_nearest_recursive(point, current.left, depth + 1, nearest)
+            else:
+                self.__find_nearest_recursive(point, current.right, depth + 1, nearest)
 
     def __check_smaller_distance(self, point, current, nearest):
         d = get_squared_distance(point, current.values)
