@@ -1,2 +1,2 @@
 # pypg
-Python playground
+Python playground. Testing and learning.
